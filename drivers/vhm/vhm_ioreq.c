@@ -171,6 +171,8 @@ static int alloc_client(void)
 	client->id = ret;
 	set_bit(IOREQ_CLIENT_EXIT, &client->flags);
 
+	printk("alloc_client: client %p, id %d, refcnt %d\n",
+				client, ret, atomic_read(&client->refcnt));
 	return ret;
 }
 
@@ -193,6 +195,7 @@ static void acrn_ioreq_put_client(struct ioreq_client *client)
 	if (atomic_dec_and_test(&client->refcnt)) {
 		/* The client should be released when refcnt = 0 */
 		/* TBD: Do we need to free the other resources? */
+		printk("client %p for %d id is released.\n", client, client->id);
 		kfree(client);
 	}
 }
